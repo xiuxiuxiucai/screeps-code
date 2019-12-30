@@ -12,9 +12,11 @@ var roleBuilder = {
      * containerObject:
      *      容器对象
      */
-    work: function(creep, containerObject) {
+    work: function(creep, containerObject, energyId) {
         // 更新工作状态
         publicMethod.setIsWork(creep);
+        // 能量矿对象
+        var energyObject = Game.getObjectById(energyId);
         
 	    // 如果当前状态为工作，就去建造
 	    if(creep.memory.working) {
@@ -31,7 +33,10 @@ var roleBuilder = {
         else {
             // 前往容器获取能量，如果容器不可用，哪凉快哪呆着
             if(!publicMethod.getPower(creep, containerObject)) {
-                creep.moveTo(15, 45, {visualizePathStyle: {stroke: creep.memory.pathColour}});
+                // creep.moveTo(15, 45, {visualizePathStyle: {stroke: creep.memory.pathColour}});
+                if(creep.harvest(energyObject) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(energyObject);
+                }
             }
 		}
 	}

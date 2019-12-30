@@ -355,3 +355,18 @@ module.exports.loop = function () {
         }
     }
 }
+
+
+/*****************************重要方法保存*********************************************/
+
+/**
+ * 找到房间中所有目标类型中离自己最近的一个并返回
+ */
+var target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+    // 判断所有房间类型
+    filter: (structure) => {
+        // 判断房间是否为仓库
+        return structure.structureType == STRUCTURE_EXTENSION &&
+            structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+    }
+});

@@ -11,8 +11,10 @@ var publicMethod = {
      * 孵化蠕虫
      * roleType
      *      蠕虫类型
+     * workObject
+     *      工作对象，可不传
      */
-    life: function(roleType) {
+    life: function(roleType, workObject) {
         var newName = roleType + Game.time;
         switch(roleType) {
             // 采矿者
@@ -30,7 +32,12 @@ var publicMethod = {
             case 'transfer':
                 // Game.spawns['S1'].spawnCreep( [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE], newName, 
                 Game.spawns['S1'].spawnCreep( [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE], newName, 
-                { memory: { role: roleType, working: false, pathColour: '#00FF00' } } );
+                { memory: { role: roleType, working: false, pathColour: '#00FF00', workObject: workObject } } );
+                break;
+            // 外出运输者
+            case 'transfer':
+                Game.spawns['S1'].spawnCreep( [WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], newName, 
+                { memory: { role: roleType, working: false, pathColour: '#FFFFFF' } } );
                 break;
             // 小运输者
             case 'smallTransfer':
@@ -71,12 +78,12 @@ var publicMethod = {
      *      期望数量
      */
     setRoleNumber: function(roleType, roleNumber) {
-        var harvesterNumber = _.filter(Game.creeps, (creep) => creep.memory.role == roleType);
+        var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == roleType);
         // if(printCreepsNum) {
-            // console.log(roleType, '数量:', harvesterNumber.length);
+            // console.log(roleType, '数量:', harvesters.length);
         // }
 
-        if(harvesterNumber.length < roleNumber) {
+        if(harvesters.length < roleNumber) {
             publicMethod.life(roleType);
         }
     },
@@ -117,8 +124,6 @@ var publicMethod = {
     
     /**
      * 工作状态检测
-     * creep
-     *      蠕虫
      */
     setIsWork: function(creep) {
 		// 如果当前状态为工作并且携带能量为0，则当前状态转为不工作，即补充能量
@@ -134,8 +139,22 @@ var publicMethod = {
     },
 
     /**
+     * 用于在游戏界面提醒错误
+     */
+    creepError: function(creep, errorText) {
+        // 蠕虫诉苦
+        var creepSay = creep.name + ':' + publicMethod.speakStr('error');
+        creep.say(creepSay);
+        // 控制台打印详情
+        console.log(creep.name, ': ' + errorText);
+    },
+    
+    /**
      * 直线距离计算
      */
+    placeLength: function(x1, y1, x2, y2) {
+        return (x1 - x2) + (y1 - y2)
+    },
 
     /**
      * 语言系统
@@ -148,6 +167,9 @@ var publicMethod = {
                 break;
             case 'workStar':
                 speakString = ['充能完毕', '上班去', '我走了', '干活去', '我吃完了', '吃饱了'];
+                break;
+            case 'error':
+                speakString = ['我出错了', '我错了', '我完了', 'warning!', 'I don\'t feel so good', '啊v分&十八s'];
                 break;
         }
         return speakString[Math.floor(Math.random() * speakString.length)];
