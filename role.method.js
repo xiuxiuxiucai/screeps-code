@@ -1,7 +1,7 @@
 /**
  * 角色的方法
  */
-var roleMethod = {
+let roleMethod = {
 
     /**
      * 移动至目标并获取容器物品
@@ -17,13 +17,13 @@ var roleMethod = {
      */
     moveAndGet: function(creep, targetId, targetPos, something) {
         // 如果能获取到对象，使用能否获取对象物品作为是否移动的条件；获取不到对象，则说明此对象不在当前房间内，使用是否在目标对象坐标上作为移动条件
-        var targetObject = Game.getObjectById(targetId);
+        let targetObject = Game.getObjectById(targetId);
         if(targetObject) {
             // 没有传对象物品就取对象中任意物品
             if(!something) {
                 // 随机取对象的一个货物
-                for(var esyaStore in targetObject.store) {
-                    var something = esyaStore;
+                for(let esyaStore in targetObject.store) {
+                    let something = esyaStore;
                     break;
                 }
             }

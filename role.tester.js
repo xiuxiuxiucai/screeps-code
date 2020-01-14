@@ -1,13 +1,14 @@
-var publicMethod = require('public.method');
-// 1
-// 测试者
-var roleTester = {
+let publicMethod = require('public.method');
+let gameConfigs = require('game.configs');
 
-    // Game.spawns['S1'].spawnCreep( [WORK, CARRY, MOVE], 'tester', { memory: { role: 'tester', working: false, pathColour: '#ffffff' } } );
-    // Game.spawns['S1'].spawnCreep( [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], 'tester', { memory: { role: 'tester', working: 'fasle', pathColour: '#ffffff' } } );
+// 测试者
+let roleTester = {
+
+    // Game.spawns['S1'].spawnCreep( [WORK, CARRY, MOVE], 'tester', { memory: { role: 'tester', isWorking: false, pathColour: '#ffffff' } } );
+    // Game.spawns['S1'].spawnCreep( [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], 'tester', { memory: { role: 'tester', isWorking: 'fasle', pathColour: '#ffffff' } } );
     work: function(creep) {
         creep.say('喵！！');
-        
+
 	}
 };
 
@@ -15,8 +16,8 @@ module.exports = roleTester;
 
 /* 收藏代码
 // 如果当前状态为工作，就去建造
-	    if(creep.memory.working) {
-	        var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
+	    if(creep.memory.isWorking) {
+	        let targets = creep.room.find(FIND_CONSTRUCTION_SITES);
 			// 前往工地
             if(targets.length > 0) {
                 if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
@@ -26,7 +27,7 @@ module.exports = roleTester;
         }
 
 // 如果当前状态为工作，就去物流
-        var targets = creep.room.find(FIND_STRUCTURES, {
+        let targets = creep.room.find(FIND_STRUCTURES, {
             // 判断所有房间类型
             filter: (structure) => {
                 // 如果房间是出生点或者仓库，则判断其容量是否还有空余
@@ -44,4 +45,48 @@ module.exports = roleTester;
                 creep.moveTo(targets[0], {visualizePathStyle: {stroke: creep.memory.pathColour}});
             }
         }
+
+// 占领新房间
+    // 生成creep
+    // Game.spawns['S1'].spawnCreep( [ CLAIM, MOVE, MOVE ], 'claimer', { memory: { role: 'claimer' } } );
+    // 要占领房间的 nowCreep
+    const nowCreep = Game.creeps['claimer']
+    // 要占领的房间
+    // 注意这一句有可能会获取不到 room 对象，下面会解释
+    const room = Game.rooms['E49S8']
+    // 如果该房间不存在就先往房间走
+    if (!room) {
+        nowCreep.moveTo(new RoomPosition(25, 25, 'E49S8'))
+    }
+    else {
+        // 如果房间存在了就说明已经进入了该房间
+        // 移动到房间的控制器并占领
+        if (nowCreep.claimController(room.controller) == ERR_NOT_IN_RANGE) {
+            nowCreep.moveTo(room.controller)
+        }
+    }
+
+// 占领新房间后修建Spawn
+    // 生成creep
+    // Game.spawns['S1'].spawnCreep( [WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], 'tempBuild', { memory: { role: 'tempBuild', isWorking: false, pathColour: '#00FFFF' } } );
+    // 要占领房间的 nowCreep
+    const nowCreep = Game.creeps['tempBuild']
+    // 能量矿对象
+    const targetSource = Game.getObjectById('5bbcaff69099fc012e63b6e8')
+    // 维修对象
+    const targetObject = Game.getObjectById('5e0b6715e15215042b0db1a5')
+    // 更新工作状态
+    publicMethod.setIsWork(nowCreep);
+    // 如果当前状态为工作，建造
+    if(nowCreep.memory.isWorking) {
+        // 前往工地
+        if(nowCreep.build(targetObject) == ERR_NOT_IN_RANGE) {
+            nowCreep.moveTo(targetObject);
+        }
+    }else {
+        // 前往容器获取能量
+        if(nowCreep.harvest(targetSource) == ERR_NOT_IN_RANGE) {
+            nowCreep.moveTo(targetSource);
+        }
+    }
 */

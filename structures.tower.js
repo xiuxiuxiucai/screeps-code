@@ -2,7 +2,7 @@
 /**
  * 防御塔
  */
-var structuresTower = {
+let structuresTower = {
 
     /**
      * 防御塔工作方法
@@ -18,11 +18,11 @@ var structuresTower = {
             minEnergy = 300;
         }
         // 遍历房间所有建筑
-        var structures = nowRoom.find(FIND_STRUCTURES);
-        for(var tower of structures) {
+        let structures = nowRoom.find(FIND_STRUCTURES);
+        for(let tower of structures) {
             if(tower.structureType == STRUCTURE_TOWER) {
                 // 获取房间内的攻击者
-                var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+                let closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
                 // 如果有攻击者，攻击攻击者
                 if(closestHostile) {
                     tower.attack(closestHostile);
@@ -30,20 +30,20 @@ var structuresTower = {
                     // 自己能量大于300才会去修别人
                     if(tower.store.getCapacity(RESOURCE_ENERGY) > minEnergy) {
                         // 得到房间损坏率最大的建筑物对象
-                        var maxHitsLessen = 0;
-                        var maxLessenStruct;
+                        let maxHitsLessen = 0;
+                        let maxLessenStruct;
                         // 判断所有建筑物类型
-                        for(var structure of structures) {
+                        for(let structure of structures) {
                             // 获取建筑最大生命值，如果等于墙或域，不需要满血
                             if(structure.structureType == STRUCTURE_WALL || structure.structureType == STRUCTURE_RAMPART) {
-                                var realHitsMax = 1000000;
+                                let realHitsMax = 1000000;
                             }else {
-                                var realHitsMax = structure.hitsMax;
+                                let realHitsMax = structure.hitsMax;
                             }
                             // 判断建筑是否损坏
                             if(structure.hits < realHitsMax) {
                                 // 计算损坏率
-                                var hitsLessen = (realHitsMax - structure.hits) / realHitsMax;
+                                let hitsLessen = (realHitsMax - structure.hits) / realHitsMax;
                                 // 取损坏率最大的
                                 if(hitsLessen > maxHitsLessen) {
                                     // 更新损坏率

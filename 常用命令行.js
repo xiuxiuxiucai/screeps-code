@@ -3,15 +3,25 @@
  * 
  * role
  *      字符串，蠕虫类型
- * working
+ * isWorking
  *      true表示在工作
+ * targetId
+ *      目标
+ * fromRoomName
+ *      来自哪一个房间，String
  * pathColour
  *      路线颜色
- * Delay
- *      int类型，延迟
  */
-Game.spawns['S1'].spawnCreep( [WORK, CARRY, MOVE], 'tester', { memory: { role: 'tester', working: true, pathColour: '#ffffff' } } );
+Game.spawns['S1'].spawnCreep( [WORK, CARRY, MOVE], 'tester', { memory: { role: 'tester', isWorking: true, pathColour: '#ffffff' } } );
 
+/**
+ * 蠕虫需要获取能量时
+ * 优先从容器取能量
+ * 没有的话，找到房间内所有能量矿，并计算与其距离
+ * 距离加上（当前去这个能量矿的虫子数的五倍）等于此能量矿的消耗值
+ * 前往耗值最小的一个能量矿（写入内存，能量取满前不会重置）
+ * 
+ */
 
 // 所有角色
     /**
@@ -114,8 +124,10 @@ withdraw
 
 
 
-
-
+// 打印对象
+for(let temp in targetCreeps) {
+    console.log(temp, '=>', targetCreeps[temp]);
+}
 
 
 
@@ -126,7 +138,7 @@ withdraw
 /**delay一下 */
         // 如果容器生命值过低，修一下
         if(containerObject.hits < 230000) {
-            var creepDelay = creep.memory.delay;
+            let creepDelay = creep.memory.delay;
             if(creepDelay > 0) {
                 creep.memory.delay = creepDelay - 1;
             }else {
